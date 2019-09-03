@@ -46,26 +46,28 @@ object FileUtil {
 
   private fun getPdfThumbnailUri(context: Context, documentUri: String, documentName: String):
       String {
-    val pdfRenderer = PdfRenderer(context.contentResolver.openFileDescriptor(Uri.parse(documentUri),
-        "r"))
+    val pdfRenderer = context.contentResolver.openFileDescriptor(Uri.parse(documentUri),
+            "r")?.let { PdfRenderer(it) }
 
-    val firstPage = pdfRenderer.openPage(0)
+    val firstPage = pdfRenderer?.openPage(0)
 
-    val bitmap = Bitmap.createBitmap(
-        firstPage.width,
-        firstPage.height,
-        Bitmap.Config.ARGB_8888)
+    val bitmap = firstPage?.height?.let {
+      Bitmap.createBitmap(
+              firstPage?.width,
+              it,
+              Bitmap.Config.ARGB_8888)
+    }
 
-    firstPage.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
-    firstPage.close()
-    pdfRenderer.close()
+    bitmap?.let { firstPage?.render(it, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY) }
+    firstPage?.close()
+    pdfRenderer?.close()
 
     // Write bitmap
     val thumbnailFile = File(context.cacheDir, documentName + "_thumbnail")
 
     try {
       FileOutputStream(thumbnailFile).use { out: FileOutputStream ->
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
+        bitmap?.compress(Bitmap.CompressFormat.PNG, 100, out)
       }
     } catch (e: IOException) {
       e.printStackTrace()

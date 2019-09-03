@@ -94,7 +94,7 @@ class ReaderViewModel(application: Application, interactors: Interactors) : Maje
   val renderer = MediatorLiveData<PdfRenderer>().apply {
     addSource(document) {
       try {
-        val pdfRenderer = PdfRenderer(getFileDescriptor(Uri.parse(it.url)))
+        val pdfRenderer = getFileDescriptor(Uri.parse(it.url))?.let { it1 -> PdfRenderer(it1) }
         value = pdfRenderer
       } catch (e: IOException) {
         e.printStackTrace()

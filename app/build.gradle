@@ -4,7 +4,7 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
 android {
-  compileSdkVersion rootProject.ext.compileSdkVersion
+  compileSdkVersion 29
 
   defaultConfig {
     applicationId "com.raywenderlich.android.majesticreader"
@@ -22,6 +22,10 @@ android {
     }
   }
   buildToolsVersion = '29.0.2'
+  compileOptions {
+    targetCompatibility = kotlin_version
+    sourceCompatibility = kotlin_version
+  }
 }
 
 dependencies {
